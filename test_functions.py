@@ -37,3 +37,8 @@ def test_func_r(i):
         return 1
     else:
         return 0
+
+
+
+def test_func_sin(x):
+    return math.sin(2*math.pi * x)

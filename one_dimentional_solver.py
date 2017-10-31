@@ -16,7 +16,7 @@ def minmod(x, y):
         return 0
 
 
-def upwind_scheme(u, nt, nx, r, x):
+def upwind_scheme(u, nt, nx, r, h):
     error = np.zeros(3)
     print(error)
     for n in range(0, nt - 1):
@@ -25,16 +25,12 @@ def upwind_scheme(u, nt, nx, r, x):
         # BC
         u[n + 1][0] = u[n][nx - 1]
     for i in range(0, nx - 1):
-        delta = u[nt - 1][i] - u[0][i]
-        #print("delta = ",delta)
+        delta = (u[nt - 1][i] - u[0][i]) * h
         error[0] += math.fabs(delta)
-        #print(delta)
-        #print(error[0])
         error[1] += delta ** 2
         if (math.fabs(delta) > error[2]):
             error[2] = math.fabs(delta)
     error[1] = math.sqrt(error[1])
-   # print(error)
     return error
 
 
@@ -62,13 +58,13 @@ def cubic_polynominal_interpolation(u, ux, nt, nx, h, ksi):
 
     for i in range(0, nx - 1):
         delta = u[nt - 1][i] - u[0][i]
-        error[0] += math.fabs(delta)
+        error[0] += delta
         error[1] += delta ** 2
-        if (math.fabs(delta) > error[2]):
-            error[2] = math.fabs(delta)
-    #error[1] = math.sqrt(error[1])
-    print(error)
+        if (delta > error[2]):
+            error[2] = delta
+    error[1] = math.sqrt(error[1])
     return error
+
 
 def fourth_order_polynominal_interpolation(u, ux, nt, nx, h, ksi, del_rho, rho):
     error = np.zeros(3)
@@ -100,7 +96,7 @@ def fourth_order_polynominal_interpolation(u, ux, nt, nx, h, ksi, del_rho, rho):
         ux[n + 1][0] = ux[n][nx - 1]
         #        rho[n + 1][0]   = rho[n][nx - 1]
     for i in range(0, nx - 1):
-        delta = u[nt - 1][i] - u[0][i]
+        delta = (u[nt - 1][i] - u[0][i]) * h
         error[0] += math.fabs(delta)
         error[1] += delta ** 2
         if (math.fabs(delta) > error[2]):
@@ -134,7 +130,7 @@ def second_order_polynominal_interpolation(u, ux, nt, nx, h, ksi, del_rho, rho):
         u[n + 1][0] = u[n][nx - 1]
         ux[n + 1][0]    = ux[n][nx - 1]
     for i in range(0, nx - 1):
-        delta = u[nt - 1][i] - u[0][i]
+        delta = (u[nt - 1][i] - u[0][i]) * h
         error[0] += math.fabs(delta)
         error[1] += delta ** 2
         if (math.fabs(delta) > error[2]):
@@ -151,14 +147,7 @@ def general_formula(u, ux, nt, nx, h, ksi):
     xi2 = ksi ** 2
     xi3 = ksi ** 3
     for n in range(0, nt - 1):
-       # print("======= n = ",n," =========")
         for i in range(0, nx - 1):
-        #    print("========= x = ",x[i], "===========")
-        #    print("h = ",h)
-        #    print("fi+1 = ", u[n][i + 1])
-        #    print("fi = ", u[n][i])
-        #    print("di+1 = ", ux[n][i + 1])
-        #    print("di = ", ux[n][i])
             S_i = (u[n][i + 1] - u[n][i]) / h
         #    print("S_i = ", S_i)
             if (ux[n][i] * ux[n][i + 1] < 0):
@@ -195,4 +184,166 @@ def general_formula(u, ux, nt, nx, h, ksi):
 
 #print(u)
 
+############# Задание №1 todo_2017 ##############
 
+
+def cip3(u, ux, nt, nx, h, xi):
+    error = np.zeros(3)
+    for n in range(0, nt - 1):
+        for i in range(1, nx - 1):
+            # BC #
+            a = (ux[n][0] + ux[n][nx - 1]) / h**2 - 2 * (u[n][0] - u[n][nx - 1]) / h**3
+
+            b = (2 * ux[n][0] + ux[n][nx - 1]) / h - 3 * (u[n][0] - u[n][nx - 1]) / h**2
+
+            c = ux[n][0]
+
+            d = u[n][0]
+
+            u[n + 1][0] = d + c * xi + b * xi**2 + a * xi**3
+
+            ux[n + 1][0] = c + 2 * b * xi + 3 * a * xi**2
+
+            # Main Loop #
+
+            a = (ux[n][i] + ux[n][i - 1]) / h**2 - 2 * (u[n][i] - u[n][i - 1]) / h**3
+
+            b = (2 * ux[n][i] + ux[n][i - 1]) / h - 3 * (u[n][i] - u[n][i - 1]) / h**2
+
+            u[n + 1][i] = u[n][i] + ux[n][i] * xi + b * xi**2 + a * xi**3
+
+            ux[n + 1][i] = ux[n][i] + 2 * b * xi + 3 * a * xi**2
+
+    for i in range(0, nx):
+        delta = (u[nt - 1][i] - u[0][i]) * h
+        error[0] += math.fabs(delta)
+        error[1] += delta ** 2
+        if(math.fabs(delta) > error[2]):
+            error[2] = math.fabs(delta)
+
+    error[1] = math.sqrt(error[1])
+    return error[0]
+
+
+def cip5(u, ux, uxx, nt, nx, h, xi):
+    error = np.zeros(3)
+    for n in range(0, nt - 1):
+        for i in range(1, nx):
+            # BC #
+
+            a = (uxx[n][0] - uxx[n][nx - 1]) / (2 * h**3) - 6 * (ux[n][0] + ux[n][nx - 1]) / (2 * h**4) + 12 * (u[n][0] - u[n][nx - 1]) / (2 * h**5)
+
+            b = ((3/2) * uxx[n][0] - uxx[n][nx - 1]) / h**2 - (8 * ux[n][0] + 7 * ux[n][nx - 1]) / h**3 + 15 * (u[n][0] - u[n][nx - 1]) / h**4
+
+            c = (3 * uxx[n][0] - uxx[n][nx - 1]) / (2 * h) - (12 * ux[n][0] + 8 * ux[n][nx - 1]) / (2 * h**2) + 20 * (u[n][0] - u[n][nx - 1]) / (2 * h**3)
+
+            d = uxx[n][0] / 2
+
+            e = ux[n][0]
+
+            f = u[n][0]
+            # print("a = {0:3f}, b = {1:3f}, c = {2:3f}, d = {3:3f}, e = {4:3f}, f = {5:3f}".format(a,b,c,d,e,f))
+
+            u[n + 1][0] = f + e * xi + d * xi**2 + c * xi**3 + b * xi**4 + a * xi**5
+
+            ux[n + 1][0] = e + 2 * d * xi + 3 * c * xi**2 + 4 * b * xi**3 + 5 * a * xi**4
+
+            uxx[n + 1][0] = 2 * d + 6 * c * xi + 12 * b * xi**2 + 20 * a * xi**3
+
+
+
+            # Main #
+            a = (uxx[n][i] - uxx[n][i - 1]) / (2 * h**3) - 6 * (ux[n][i] + ux[n][i - 1]) / (2 * h**4) + 12 * (u[n][i] - u[n][i - 1]) / (2 * h**5)
+
+            b = ((3/2) * uxx[n][i] - uxx[n][i - 1]) / h**2 - (8 * ux[n][i] + 7 * ux[n][i - 1]) / h**3 + 15 * (u[n][i] - u[n][i - 1]) / h**4
+
+            c = (3 * uxx[n][i] - uxx[n][i - 1]) / (2 * h) - (12 * ux[n][i] + 8 * ux[n][i - 1]) / (2 * h**2) + 20 * (u[n][i] - u[n][i - 1]) / (2 * h**3)
+
+            d = uxx[n][i] / 2
+
+            e = ux[n][i]
+
+            f = u[n][i]
+            # print("a = {0:3f}, b = {1:3f}, c = {2:3f}, d = {3:3f}, e = {4:3f}, f = {5:3f}".format(a,b,c,d,e,f))
+
+            u[n + 1][i] = f + e * xi + d * xi**2 + c * xi**3 + b * xi**4 + a * xi**5
+
+            ux[n + 1][i] = e + 2 * d * xi + 3 * c * xi**2 + 4 * b * xi**3 + 5 * a * xi**4
+
+            uxx[n + 1][i] = 2 * d + 6 * c * xi + 12 * b * xi**2 + 20 * a * xi**3
+
+            # print("u[n + 1][i] = {0:3f}, ux[n + 1][i] = {1:3f}, uxx[n + 1][i] = {2:3f}".format(u[n + 1][i],ux[n + 1][i],uxx[n + 1][i]))
+
+    for i in range(0, nx - 1):
+        delta = (u[nt - 1][i] - u[0][i]) * h
+        error[0] += math.fabs(delta)
+        error[1] += delta ** 2
+        if (math.fabs(delta) > error[2]):
+            error[2] = math.fabs(delta)
+    error[1] = math.sqrt(error[1])
+    return error
+
+def cip7(u, ux, u2x, u3x, nt, nx, h, xi):
+    error = np.zeros(3)
+    for n in range(0, nt - 1):
+        for i in range(1, nx):
+            # BC #
+            a = (u3x[n][0] + u3x[n][nx - 1]) / (6 * h**4) - 2 * (u2x[n][0] - u2x[n][nx - 1]) / h**5 + 10 * (ux[n][0] + ux[n][nx - 1]) / h**6 - 20 * (u[n][0] - u[n][nx - 1]) / h**7
+
+            b = (4 * u3x[n][0] + 3 * u3x[n][nx - 1]) / (6 * h**3) - (45 * u2x[n][0] - 39 * u2x[n][nx - 1]) / (6 * h**4) + (216 * ux[n][0] + 204 * ux[n][nx - 1]) / (6 * h**5) - 420 * (u[n][0] - u[n][nx - 1]) / (6 * h**6)
+
+            c = (u3x[n][0] + 0.5 * u3x[n][nx - 1]) / h**2 - (10 * u2x[n][0] - 7 * u2x[n][nx - 1]) / h**3 + (45 * ux[n][0] + 39 * ux[n][nx - 1]) / h**4 - 84 * (u[n][0] - u[n][nx - 1]) / h**5
+
+            d = (4 * u3x[n][0] + u3x[n][nx - 1]) / (6 * h) - 15 * (2 * u2x[n][0] - u2x[n][nx - 1]) / (6 * h**2) + 30 * (4 * ux[n][0] + 3 * ux[n][nx - 1]) / (6 * h**3) - 210 * (u[n][0] - u[n][nx - 1]) / (6 * h**4)
+
+            e = u3x[n][0] / 6
+
+            f = u2x[n][0] / 2
+
+            g = ux[n][0]
+
+            l = u[n][0]
+
+            u[n + 1][0] = l + g * xi + f * xi ** 2 + e * xi ** 3 + d * xi ** 4 + c * xi ** 5 + b * xi ** 6 + a * xi ** 7
+
+            ux[n + 1][0] = g + 2 * f * xi + 3 * e * xi ** 2 + 4 * d * xi ** 3 + 5 * c * xi ** 4 + 6 * b * xi ** 5 + 7 * a * xi ** 6
+
+            u2x[n + 1][0] = 2 * f + 6 * e * xi + 12 * d * xi ** 2 + 20 * c * xi ** 3 + 30 * b * xi ** 4 + 42 * a * xi ** 5
+
+            u3x[n + 1][0] = 6 * e + 24 * d * xi + 60 * c * xi ** 2 + 120 * b * xi ** 3 + 210 * a * xi ** 4
+
+            # Main #
+            a = (u3x[n][i] + u3x[n][i - 1]) / (6 * h**4) - 2 * (u2x[n][i] - u2x[n][i - 1]) / h**5 + 10 * (ux[n][i] + ux[n][i - 1]) / h**6 - 20 * (u[n][i] - u[n][i - 1]) / h**7
+
+            b = (4 * u3x[n][i] + 3 * u3x[n][i - 1]) / (6 * h**3) - (45 * u2x[n][i] - 39 * u2x[n][i - 1]) / (6 * h**4) + (216 * ux[n][i] + 204 * ux[n][i - 1]) / (6 * h**5) - 420 * (u[n][i] - u[n][i - 1]) / (6 * h**6)
+
+            c = (u3x[n][i] + 0.5 * u3x[n][i - 1]) / h**2 - (10 * u2x[n][i] - 7 * u2x[n][i - 1]) / h**3 + (45 * ux[n][i] + 39 * ux[n][i - 1]) / h**4 - 84 * (u[n][i] - u[n][i - 1]) / h**5
+
+            d = (4 * u3x[n][i] + u3x[n][i - 1]) / (6 * h) - 15 * (2 * u2x[n][i] - u2x[n][i - 1]) / (6 * h**2) + 30 * (4 * ux[n][i] + 3 * ux[n][i - 1]) / (6 * h**3) - 210 * (u[n][i] - u[n][i - 1]) / (6 * h**4)
+
+            e = u3x[n][i] / 6
+
+            f = u2x[n][i] / 2
+
+            g = ux[n][i]
+
+            l = u[n][i]
+
+            u[n + 1][i] = l + g * xi + f * xi**2 + e * xi**3 + d * xi**4 + c * xi**5 + b * xi**6 + a * xi**7
+
+            ux[n + 1][i] = g + 2 * f * xi + 3 * e * xi**2 + 4 * d * xi**3 + 5 * c * xi**4 + 6 * b * xi**5 + 7 * a * xi**6
+
+            u2x[n + 1][i] = 2 * f + 6 * e * xi + 12 * d * xi**2 + 20 * c * xi**3 + 30 * b * xi**4 + 42 * a * xi**5
+
+            u3x[n + 1][i] = 6 * e + 24 * d * xi + 60 * c * xi**2 + 120 * b * xi**3 + 210 * a * xi**4
+
+    for i in range(0, nx - 1):
+        delta = (u[nt - 1][i] - u[0][i]) * h
+        error[0] += math.fabs(delta)
+        error[1] += delta ** 2
+        if (math.fabs(delta) > error[2]):
+            error[2] = math.fabs(delta)
+    error[1] = math.sqrt(error[1])
+    return error
+
+    return error
