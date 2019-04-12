@@ -34,7 +34,7 @@ r = 0.5
 
 grid_steps = np.array([8, 16, 32, 64])
 
-c_cip3, cL_cip3 = np.zeros(grid_steps.size)
+c_cip3 = np.zeros(grid_steps.size)
 
 
 for i in range(grid_steps.size):
