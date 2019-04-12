@@ -1,16 +1,12 @@
 from sympy import *
-#from sympy import Symbol, solve
 from sympy.solvers.solveset import linsolve
-from sympy.polys.polyfuncs import horner
 
 def symbolCIP3():
     # Set symbolic parameters
-    x, a, b, c, d, e, ui, ui1, gi, gi1, ro = symbols('x, a, b, c, d, e, ui, ui1, gi, gi1, ro')
-    h = symbols('h')
+    x, a, b, c, d, e, ui, ui1, gi, gi1, h = symbols('x, a, b, c, d, e, ui, ui1, gi, gi1, h')
 
     # Set interpolation polynomials
     f = a + b * x + c * x ** 2 + d * x ** 3
-    # f = a + b*x + c*x**2
     df = f.diff(x)
     int_f = f.integrate(x)
     # Set constrains
@@ -24,24 +20,13 @@ def symbolCIP3():
 
     # Get coefficients
     sol_get = next(iter(sol))
-    a_expr = sol_get[0]
-    b_expr = sol_get[1]
-    c_expr = sol_get[2]
     d_expr = sol_get[3]
-    # e_expr = sol_get[4]
-    print(sol_get)
+    c_expr = sol_get[2]
+    b_expr = sol_get[1]
+    a_expr = sol_get[0]
 
-    print("d = ")
-    print(a_expr)
-    print("\n")
-    print("c = ")
-    print(b_expr)
-    print("\n")
-    print("b = ")
-    print(c_expr)
-    print("a = ")
-    print(d_expr)
-    print("\n")
+    print("f = {0} + {1} * x + {2} * x ** 2 + {3} * x ** 3\n".format(a_expr, b_expr, c_expr, d_expr))
+
 
 
 
@@ -68,22 +53,13 @@ def symbolCIP5():
     e_expr = sol_get[4]
     f_expr = sol_get[5]
 
-    print("a = ")
-    print(a_expr)
-    print("b = ")
-    print(b_expr)
-    print("c = ")
-    print(c_expr)
-    print("d = ")
-    print(d_expr)
-    print("e = ")
-    print(e_expr)
-    print("f = ")
-    print(f_expr)
+    print("f = {0}\ne = {1}\nd = {2}\nc = {3}\nb = {4}\na = {5}\n".format(f_expr, e_expr, d_expr, c_expr, b_expr, a_expr))
+
 
 def symbolCIP7():
     # Set symbolic parameters
-    x, a, b, c, d, e, f, g, l, h, ui, ui1, gi, gi1, ggi, ggi1, gggi, gggi1 = symbols('x, a, b, c, d, e, f, g, l, h, ui, ui1, gi, gi1, ggi, ggi1, gggi, gggi1')
+    x, a, b, c, d, e, f, g, l, h, ui, ui1, gi, gi1, ggi, ggi1, gggi, gggi1 \
+        = symbols('x, a, b, c, d, e, f, g, l, h, ui, ui1, gi, gi1, ggi, ggi1, gggi, gggi1')
     # Set interpolation polynomial
     func = l + g * x + f * x**2 + e * x**3 + d * x**4 + c * x**5 + b * x**6 + a * x**7
     df = func.diff(x)
@@ -98,95 +74,50 @@ def symbolCIP7():
     eq07 = dddf.subs(x, 0)
     eq08 = dddf.subs(x, -h)
     # Solve system under constrains
-    sol = linsolve([eq01 - ui, eq02 - gi, eq03 - ui1, eq05 - ggi, eq04 - gi1, eq07 - gggi, eq06 - ggi1, eq08 - gggi1], (a, b, c, d, e, f, g, l))
+    sol = linsolve([eq01 - ui, eq02 - gi, eq03 - ui1, eq05 - ggi, eq04 - gi1, eq07 - gggi, eq06 - ggi1, eq08 - gggi1],
+                   (a, b, c, d, e, f, g, l))
     sol_get = next(iter(sol))
-    a_expr = sol_get[0]
-    b_expr = sol_get[1]
-    c_expr = sol_get[2]
-    d_expr = sol_get[3]
-    e_expr = sol_get[4]
-    f_expr = sol_get[5]
-    g_expr = sol_get[6]
-    l_expr = sol_get[7]
-
-    print("a = ")
-    print(a_expr)
-    print("b = ")
-    print(b_expr)
-    print("c = ")
-    print(c_expr)
-    print("d = ")
-    print(d_expr)
-    print("e = ")
-    print(e_expr)
-    print("f = ")
-    print(f_expr)
-    print("g = ")
-    print(g_expr)
-    print("l = ")
-    print(l_expr)
+    exprs = zeros(8)
+    symbol_expr = ["a", "b", "c", "d", "e", "f", "g", "l"]
+    for i in range(0, 8):
+        exprs[i] = sol_get[i]
+        print("{0} = {1}\n".format(symbol_expr[i], exprs[i]))
 
 
 def symbolCIP9():
     # Set symbolic parameters
-    x, a, b, c, d, e, f, g, l, k, q, h, ui, ui1, gi, gi1, ggi, ggi1, gggi, gggi1, ggggi, ggggi1 \
-        = symbols('x, a, b, c, d, e, f, g, l, k, q, h, ui, ui1, gi, gi1, ggi, ggi1, gggi, gggi1, ggggi, ggggi1')
+    x, a, b, c, d, e, f, g, l, k, q, h, ui, ui1, gi, gi1, ggi, ggi1, g3i, g3i1, g4i, g4i1 \
+        = symbols('x, a, b, c, d, e, f, g, l, k, q, h, ui, ui1, gi, gi1, ggi, ggi1, g3i, g3i1, g4i, g4i1')
 
     # Set interpolation polynomial
     func = q + k * x + l * x**2 + g * x**3 + f * x**4 + e * x**5 + d * x**6 + c * x**7 + b * x**8 + a * x**9
+
     df = func.diff(x)
     ddf = df.diff(x)
-    dddf = ddf.diff(x)
-    ddddf = dddf.diff(x)
+    d3f = ddf.diff(x)
+    d4f = d3f.diff(x)
     eq01 = func.subs(x, 0)
     eq02 = df.subs(x, 0)
     eq03 = func.subs(x, -h)
     eq04 = df.subs(x, -h)
     eq05 = ddf.subs(x, 0)
     eq06 = ddf.subs(x, -h)
-    eq07 = dddf.subs(x, 0)
-    eq08 = dddf.subs(x, -h)
-    eq09 = ddddf.subs(x, 0)
-    eq10 = ddddf.subs(x, -h)
+    eq07 = d3f.subs(x, 0)
+    eq08 = d3f.subs(x, -h)
+    eq09 = d4f.subs(x, 0)
+    eq10 = d4f.subs(x, -h)
 
     # Solve system under constrains
 
-    sol = linsolve([eq01 - ui, eq02 - gi, eq03 - ui1, eq05 - ggi, eq04 - gi1, eq07 - gggi, eq06 - ggi1, eq08 - gggi1, eq09 - ggggi, eq10 - ggggi1], (a, b, c, d, e, f, g, l, k, q))
-    sol_get = next(iter(sol))
-    a_expr = sol_get[0]
-    b_expr = sol_get[1]
-    c_expr = sol_get[2]
-    d_expr = sol_get[3]
-    e_expr = sol_get[4]
-    f_expr = sol_get[5]
-    g_expr = sol_get[6]
-    l_expr = sol_get[7]
-    k_expr = sol_get[8]
-    q_expr = sol_get[9]
-    print("a = ")
-    print(a_expr)
-    print("b = ")
-    print(b_expr)
-    print("c = ")
-    print(c_expr)
-    print("d = ")
-    print(d_expr)
-    print("e = ")
-    print(e_expr)
-    print("f = ")
-    print(f_expr)
-    print("g = ")
-    print(g_expr)
-    print("l = ")
-    print(l_expr)
-    print("k = ")
-    print(k_expr)
-    print("q = ")
-    print(q_expr)
+    sol = linsolve([eq01 - ui, eq02 - gi, eq03 - ui1, eq05 - ggi, eq04 - gi1, eq07 - g3i, eq06 - ggi1, eq08 - g3i1,
+                    eq09 - g4i, eq10 - g4i1], (a, b, c, d, e, f, g, l, k, q))
 
-# symsolCIP5()
-# symsolCIP7()
-# symsolCIP9()
+    sol_get = next(iter(sol))
+    exprs = zeros(10)
+    symbol_expr = ["a", "b", "c", "d", "e", "f", "g", "l", "k", "q"]
+    for i in range(0, 10):
+        exprs[i] = sol_get[i]
+        print("{0} = {1}\n".format(symbol_expr[i], exprs[i]))
 
 
 def symboldeltaP3():
@@ -196,7 +127,6 @@ def symboldeltaP3():
     u = c1 + c2 * x + c3 * x ** 2 + c4 * x ** 3
 
     du = u.diff(x)
-    print(du)
     # Set constrains
     eq01 = u.subs(x, 0)
     eq02 = du.subs(x, 0)
@@ -210,16 +140,11 @@ def symboldeltaP3():
     c2_expr = sol_get[1].subs(ri, ri / h)
     c3_expr = sol_get[2].subs(ri, ri / h).subs(ri1, ri1 / h)
     c4_expr = sol_get[3].subs(ri, ri / h).subs(ri1, ri1 / h)
-    print(("c1 = {0}".format(c1_expr)))
-    print(("c2 = {0}".format(c2_expr)))
-    print(("c3 = {0}".format(c3_expr)))
-    print(("c4 = {0}".format(c4_expr)))
+    print(("c1 = {0}\nc2 = {1}\nc3 = {2}\nc4 = {3}".format(c1_expr, c2_expr, c3_expr, c4_expr)))
 
-    # print("u = {0}".format(u))
-    # nu = a * t / h
+
     # Set constrains
     ui = u.subs(x, 0)
-    ui1 = u.subs(x, -h)
 
     ux = u.diff(x)
     uxi = ux.subs(x, 0)
@@ -239,25 +164,7 @@ def symboldeltaP3():
     rxx = rx.diff(x)
     rxxi = rxx.subs(x, 0)
 
-    # uxx = ux.diff(x)
-    # u3x = uxx.diff(x)
-
-    # print("ui = {0}, ui1 = {1}, ri = {2}, ri1 = {3}".format(simplify(ui), simplify(ui1), ri, ri1))
-    #
-    # c1 = ui
-    # c2 = ri / h
-    #
-    # c3 = (3 * (ui1 - ui) + 2 * ri + ri1) / h**2
-    # c4 = (2 * (ui1 - ui) + ri + ri1) / h**3
-
-    # uxx = 2 * c3
-    # u3x = 6 * c4
-    #
-    # rx = h * 2 * c3
-    # rxx = h * 6 * c4
-
     uni = ui - a * t * uxi + a**2 * t**2 / 2 * uxxi - a**3 * t**3 / 6 * u3xi
-    # uni = simplify(uni)
     _uni = uni.subs(c1, c1_expr).subs(c2, c2_expr).subs(c3, c3_expr).subs(c4, c4_expr).subs(a * t / h, nu)
     _uni = collect(expand(_uni), nu)
     print(_uni)
@@ -289,12 +196,6 @@ def symboldeltaP5():
                    (c1, c2, c3, c4, c5, c6))
 
     sol_get = next(iter(sol))
-    # c1_expr = sol_get[0].subs(ri, ri / h).subs(ri1, ri1 / h).subs(rxi, rxi / h**2).subs(rxi1, rxi1 / h**2)
-    # c2_expr = sol_get[1].subs(ri, ri / h).subs(ri1, ri1 / h).subs(rxi, rxi / h**2).subs(rxi1, rxi1 / h**2)
-    # c3_expr = sol_get[2].subs(ri, ri / h).subs(ri1, ri1 / h).subs(rxi, rxi / h**2).subs(rxi1, rxi1 / h**2)
-    # c4_expr = sol_get[3].subs(ri, ri / h).subs(ri1, ri1 / h).subs(rxi, rxi / h**2).subs(rxi1, rxi1 / h**2)
-    # c5_expr = sol_get[4].subs(ri, ri / h).subs(ri1, ri1 / h).subs(rxi, rxi / h**2).subs(rxi1, rxi1 / h**2)
-    # c6_expr = sol_get[5].subs(ri, ri / h).subs(ri1, ri1 / h).subs(rxi, rxi / h**2).subs(rxi1, rxi1 / h**2)
     c1_expr = sol_get[0]
     c2_expr = sol_get[1].subs(_uxi, ri / h)
     c3_expr = sol_get[2].subs(_uxxi, rxi / h ** 2)
@@ -341,23 +242,6 @@ def symboldeltaP5():
 
     r4x = r3x.diff(x)
     r4xi = r4x.subs(x, 0)
-
-    # uxx = ux.diff(x)
-    # u3x = uxx.diff(x)
-
-    # print("ui = {0}, ui1 = {1}, ri = {2}, ri1 = {3}".format(simplify(ui), simplify(ui1), ri, ri1))
-    #
-    # c1 = ui
-    # c2 = ri / h
-    #
-    # c3 = (3 * (ui1 - ui) + 2 * ri + ri1) / h**2
-    # c4 = (2 * (ui1 - ui) + ri + ri1) / h**3
-
-    # uxx = 2 * c3
-    # u3x = 6 * c4
-    #
-    # rx = h * 2 * c3
-    # rxx = h * 6 * c4
 
     uni = (ui - a * tau * uxi + a**2 * tau**2 / 2 * uxxi - a**3 * tau**3 / 6
            * u3xi + a**4 * tau**4 / 24 * u4xi - a ** 5 * tau ** 5 / 120 * u5xi)
@@ -977,4 +861,4 @@ def two_dim_deltaP3():
     # print(simplify(_suni))
     # print(simplify(_svni))
 
-symboldeltaP7()
+symboldeltaP3()
