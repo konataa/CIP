@@ -1401,7 +1401,3 @@ def convergence(error):
         result[i] = (np.log(error[i - 1] / error[i])) / (np.log(2))
     print(result)
     return result
-
-err = np.zeros(3)
-
-# two_dim_deltaP3(err, 50, 50)
