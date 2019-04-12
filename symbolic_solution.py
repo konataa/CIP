@@ -20,12 +20,9 @@ def symbolCIP3():
 
     # Get coefficients
     sol_get = next(iter(sol))
-    d_expr = sol_get[3]
-    c_expr = sol_get[2]
-    b_expr = sol_get[1]
-    a_expr = sol_get[0]
-
-    print("f = {0} + {1} * x + {2} * x ** 2 + {3} * x ** 3\n".format(a_expr, b_expr, c_expr, d_expr))
+    symbol_expr = ["a", "b", "c", "d"]
+    for i in range(0, 4):
+        print("{0} = {1}\n".format(symbol_expr[i], sol_get[i]))
 
 
 
@@ -46,14 +43,9 @@ def symbolCIP5():
     # Solve system under constrains
     sol = linsolve([eq01 - ui, eq02 - gi, eq05 - ggi, eq03 - ui1, eq04 - gi1, eq06 - ggi1], (a, b, c, d, e, f))
     sol_get = next(iter(sol))
-    a_expr = sol_get[0]
-    b_expr = sol_get[1]
-    c_expr = sol_get[2]
-    d_expr = sol_get[3]
-    e_expr = sol_get[4]
-    f_expr = sol_get[5]
-
-    print("f = {0}\ne = {1}\nd = {2}\nc = {3}\nb = {4}\na = {5}\n".format(f_expr, e_expr, d_expr, c_expr, b_expr, a_expr))
+    symbol_expr = ["a", "b", "c", "d", "e", "f"]
+    for i in range(0, 6):
+        print("{0} = {1}\n".format(symbol_expr[i], sol_get[i]))
 
 
 def symbolCIP7():
@@ -77,11 +69,9 @@ def symbolCIP7():
     sol = linsolve([eq01 - ui, eq02 - gi, eq03 - ui1, eq05 - ggi, eq04 - gi1, eq07 - gggi, eq06 - ggi1, eq08 - gggi1],
                    (a, b, c, d, e, f, g, l))
     sol_get = next(iter(sol))
-    exprs = zeros(8)
     symbol_expr = ["a", "b", "c", "d", "e", "f", "g", "l"]
     for i in range(0, 8):
-        exprs[i] = sol_get[i]
-        print("{0} = {1}\n".format(symbol_expr[i], exprs[i]))
+        print("{0} = {1}\n".format(symbol_expr[i], sol_get[i]))
 
 
 def symbolCIP9():
@@ -113,11 +103,9 @@ def symbolCIP9():
                     eq09 - g4i, eq10 - g4i1], (a, b, c, d, e, f, g, l, k, q))
 
     sol_get = next(iter(sol))
-    exprs = zeros(10)
     symbol_expr = ["a", "b", "c", "d", "e", "f", "g", "l", "k", "q"]
     for i in range(0, 10):
-        exprs[i] = sol_get[i]
-        print("{0} = {1}\n".format(symbol_expr[i], exprs[i]))
+        print("{0} = {1}\n".format(symbol_expr[i], sol_get[i]))
 
 
 def symboldeltaP3():
@@ -669,6 +657,9 @@ def two_dim_deltaP3():
 
     sol_get = next(iter(sol))
 
+    for i in range(1, 10):
+        print("c{0} = {1}".format(i, sol_get[i - 1]))
+
     c1_expr = sol_get[0] #.subs(r_i_j1, r_i_j1 / h).subs(r_i1_j1, r_i1_j1 / h).subs(r_i1_j, r_i1_j / h)\
        # .subs(s_i_j1, s_i_j1 / h).subs(s_i1_j1, s_i1_j1 / h).subs(s_i1_j, s_i1_j / h)
 
@@ -699,16 +690,6 @@ def two_dim_deltaP3():
     c10_expr = sol_get[9] #.subs(r_i_j1, r_i_j1 / h).subs(r_i1_j1, r_i1_j1 / h).subs(r_i1_j, r_i1_j / h)\
         #.subs(s_i_j1, s_i_j1 / h).subs(s_i1_j1, s_i1_j1 / h).subs(s_i1_j, s_i1_j / h)
 
-    print("c1 = {0}".format(c1_expr))
-    print("c2 = {0}".format(c2_expr))
-    print("c3 = {0}".format(c3_expr))
-    print("c4 = {0}".format(c4_expr))
-    print("c5 = {0}".format(c5_expr))
-    print("c6 = {0}".format(c6_expr))
-    print("c7 = {0}".format(c7_expr))
-    print("c8 = {0}".format(c8_expr))
-    print("c9 = {0}".format(c9_expr))
-    print("c10 = {0}\n".format(c10_expr))
 
     # first derivative in the x-direction
 
@@ -780,9 +761,7 @@ def two_dim_deltaP3():
 
     u_xxi = u_xx.subs(x, 0).subs(y, 0)
     u_xyi = u_xy.subs(x, 0).subs(y, 0)
-    u_yyi = u_yy.subs(x, 0).subs(y, 0)
 
-    v_xxi = v_xx.subs(x, 0).subs(y, 0)
     v_xyi = v_xy.subs(x, 0).subs(y, 0)
     v_yyi = v_yy.subs(x, 0).subs(y, 0)
 
@@ -795,9 +774,7 @@ def two_dim_deltaP3():
     u_3xi = u_3x.subs(x, 0).subs(y, 0)
     u_xxyi = u_xxy.subs(x, 0).subs(y, 0)
     u_xyyi = u_xyy.subs(x, 0).subs(y, 0)
-    u_3yi = u_3y.subs(x, 0).subs(y, 0)
 
-    v_3xi = v_3x.subs(x, 0).subs(y, 0)
     v_xxyi = v_xxy.subs(x, 0).subs(y, 0)
     v_xyyi = v_xyy.subs(x, 0).subs(y, 0)
     v_3yi = v_3y.subs(x, 0).subs(y, 0)
@@ -852,13 +829,7 @@ def two_dim_deltaP3():
        .subs(c6, c6_expr).subs(c7, c7_expr).subs(c8, c8_expr).subs(c9, c9_expr).subs(c10, c10_expr).subs(tau / h, nu)
 
     print(simplify(_pni))
-    # print(simplify(_uni))
-    # print(simplify(_vni))
     print(simplify(_rpni))
-    # print(simplify(_runi))
-    # print(simplify(_rvni))
     print(simplify(_spni))
-    # print(simplify(_suni))
-    # print(simplify(_svni))
 
-symboldeltaP3()
+symboldeltaP9()
